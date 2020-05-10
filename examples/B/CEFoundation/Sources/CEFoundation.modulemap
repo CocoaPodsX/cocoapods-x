@@ -1,0 +1,6 @@
+framework module CEFoundation {
+  umbrella header "CEFoundation.h"
+
+  export *
+  module * { export * }
+}
