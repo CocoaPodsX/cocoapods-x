@@ -38,7 +38,7 @@ module Pod
                             open_podfile!
                         end
                     rescue => exception
-                        puts "[!] Pod::X #{exception}".red
+                        UI.puts "[!] Pod::X #{exception}".red
                     end
 
                 end

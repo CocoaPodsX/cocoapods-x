@@ -19,13 +19,18 @@ module Pod
             end
 
             def self.create_conf! project_url
-                index = 0
                 name = File.basename(project_url)
                 projects = Pod::X::Sandbox::workspace::projects
-                begin 
-                    project_debug_url = projects::root + "#{name}@#{index}"
-                    index += 1
-                end while project_debug_url.exist?
+                for index in 0..10000
+                    if index == 0 
+                        project_debug_url = projects::root + name
+                    else
+                        project_debug_url = projects::root + "#{name}@#{index}"
+                    end
+                    unless project_debug_url.exist?
+                        break
+                    end
+                end
                 Pod::X::Configurator::new project_url, project_debug_url
             end
 

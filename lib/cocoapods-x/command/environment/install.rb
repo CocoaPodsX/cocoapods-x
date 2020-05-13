@@ -15,7 +15,7 @@ module Pod
     
                     def run
                         begin
-                            UI.puts "Installing X environment."
+                            UI.puts "Pod::X Installing X environment."
                             Pod::X::Environment::install!
                             UI.puts "Pod::X Env installation complete!".green
                         rescue => exception

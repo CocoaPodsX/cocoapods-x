@@ -15,11 +15,11 @@ module Pod
     
                     def run
                         begin
-                            UI.puts "Updating X environment."
+                            UI.puts "Pod::X Updating X environment."
                             Pod::X::Environment::update!
                             UI.puts "Pod::X Env installation complete!".green
                         rescue => exception
-                            puts "[!] Pod::X #{exception}".red
+                            UI.puts "[!] Pod::X #{exception}".red
                         end
                     end
 

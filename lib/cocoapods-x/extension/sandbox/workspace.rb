@@ -38,6 +38,15 @@ module Pod
                 def source_file
                     root + 'source'
                 end
+
+                def x ## 返回repos
+                    repos_map = Hash::new(nil)
+                    for url in Dir.glob(@repos::root + '*/*') do
+                        puts url
+                    end
+
+                    root
+                end
                 
             end
         end

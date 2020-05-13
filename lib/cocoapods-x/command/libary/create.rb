@@ -29,7 +29,7 @@ module Pod
                         configure_url = Pod::X::Sandbox::workspace::template::configure
                         template_url = Pod::X::Sandbox::workspace::template::ios_template
                         if Dir::exist?(target_url) && !Dir::empty?(target_url)
-                            UI.puts "fatal: destination path '#{project_name}' already exists and is not an empty directory.".red
+                            UI.puts "Pod::X fatal: destination path '#{project_name}' already exists and is not an empty directory.".red
                         else
                             rm! ['-rf', target_url]
                             if !template_url.exist? 

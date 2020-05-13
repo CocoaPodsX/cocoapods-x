@@ -24,13 +24,12 @@ module Pod
                 def run
                     begin
                         if @name.nil? || @name.size <= 0
-                            open_project_repos!
                             open_workspace_repos!
                         else
                             open_repo! @name
                         end
                     rescue => exception
-                        puts "[!] Pod::X #{exception}".red
+                        UI.puts "[!] Pod::X #{exception}".red
                     end
                 end
 
@@ -38,14 +37,6 @@ module Pod
 
                 extend Executable
                 executable :open
-
-                def open_project_repos!
-                    begin
-                        project = Pod::X::Environment::init!
-                        open! [project.root]
-                    rescue => exception
-                    end
-                end
 
                 def open_workspace_repos!
                     workspace = Pod::X::Environment::install!
@@ -61,7 +52,7 @@ module Pod
                             open! [path]
                         else
                             raise Informative, "No `#{name}' found in the project directory."
-                        end                        
+                        end
                     else
                         raise Informative, "No `#{name}' found in the project directory."
                     end

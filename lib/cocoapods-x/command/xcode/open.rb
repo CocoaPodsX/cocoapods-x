@@ -26,7 +26,7 @@ module Pod
                                 index = UI.choose_from_array(choices, 'Which file do you want to open?')
                                 openxc(urls[index])
                             rescue => exception
-                                UI.puts "[!] #{exception}".red
+                                UI.puts "[!] Pod::X #{exception}".red
                             end
                         else
                             openxc('/Applications/Xcode.app')
