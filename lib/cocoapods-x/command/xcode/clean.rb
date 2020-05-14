@@ -17,7 +17,7 @@ module Pod
             
                     def self.options
                         [
-                            ['--all', 'Remove all the cached without asking']
+                            ['--open', 'Open after Installation complete']
                         ].concat(super)
                     end
 
@@ -47,7 +47,7 @@ module Pod
                                     remove_files ['Pods', 'Podfile.lock', 'DerivedData']
                                 end
                             rescue => exception
-                                UI.puts "[!] Pod::X #{exception}".red
+                                UI.puts '[!] Pod::X '.blue + "#{exception}".red
                             end
                         end
                     end

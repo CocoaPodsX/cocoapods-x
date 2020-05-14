@@ -38,7 +38,7 @@ module Pod
                 end
 
                 def source_file
-                    root + 'source'
+                    root + 'sources'
                 end
 
                 def project_name 

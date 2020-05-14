@@ -7,7 +7,7 @@ module Pod
 
                 include Pod::X::Sandbox::Protocol
 
-                Repo = Struct::new(:name, :argv, :pod, :source, :repo_url, :hostname, :share)
+                Repo = Struct::new(:name, :repo_url, :location_url)
 
                 def initialize url
                     super File.join(url, 'repos')
@@ -21,47 +21,44 @@ module Pod
                     
                 end
 
-                def self.repo name, argv, pod, source 
-                    domain = source[:domain]
-                    group = source[:group]
-                    git = source[:git]
+                def self.Repo name, pod_argv, source_argv, workspace, project
+                    return nil if pod_argv.nil?
 
-                    puts group
-                    puts group.class
-                    puts source
-                    puts source.class
-                    if domain.start_with? "git@"
-                        repo_url = source_git(domain, group, git)
+                    location_url = pod_argv[:path]
+                    return Repo::new(name, nil, location_url) unless location_url.nil?
+
+                    repo_url = pod_argv[:source]
+                    return Repo::new(name, repo_url, LocationUrl(name, repo_url, pod_argv, workspace, project)) unless repo_url.nil?
+
+                    return Repo::new(name, nil, nil) if source_argv.nil?                    
+
+                    git_name = source_argv[:git]
+                    return Repo::new(name, nil, nil) if git_name.nil?
+
+                    group_name = source_argv[:group]
+                    return Repo::new(name, nil, nil) if group_name.nil?
+
+                    domain_name = source_argv[:domain]
+                    return Repo::new(name, nil, nil) if domain_name.nil?
+                    
+                    if domain_name.start_with? "git@"
+                        repo_url = RepoGitUrl(domain_name, group_name, git_name)
                     else
-                        repo_url = source_http(domain, group, git)
+                        repo_url = RepoHttpUrl(domain_name, group_name, git_name)
                     end
-                    hostname = hostname(repo_url)
-                    Repo::new(name, argv, pod, source, repo_url, hostname, pod[:share])
-                end
 
-                def pod_path repo
-                    return Pathname(repo.pod[:path]) unless repo.pod[:path].nil?
-                    root + "#{repo.hostname}/#{repo.name}"
-                end
-
-                def pod_clone! repo
-                    path = pod_path(repo)
-                    rm! ['-rf', path]
-                    git_clone!(repo.name, repo.repo_url, path)
+                    Repo::new(name, repo_url, LocationUrl(name, repo_url, pod_argv, workspace, project))
                 end
                 
                 private
 
-                def git_clone! name, repo_url, to
-                    UI.section("Pod::X Cloning `#{name}` into #{repo_url}.".green) do
-                        git! ['clone', repo_url, to]
-                    end
-                    unless (to + '.git').exist?
-                        raise Informative, "Clone failed."
-                    end
+                def self.LocationUrl name, repo_url, pod_argv, workspace, project
+                    hostname = Hostname(repo_url)
+                    root = pod_argv[:share] ? workspace::repos::root : project::repos::root
+                    (root + "#{hostname}/#{name}").to_s
                 end
 
-                def self.hostname repo_url
+                def self.Hostname repo_url
                     url = repo_url
                     if url.start_with? 'git@'
                         url = url.gsub ':', '/'
@@ -69,28 +66,13 @@ module Pod
                     end
                     URI(url).hostname
                 end
-                
-                def self.repo_url name, argv, pod, source
-                    return pod[:source] unless pod[:source].nil?
 
-                    domain = source[:domain]
-                    group = source[:group]
-                    git = source[:git]
-
-                    if domain.start_with? "git@"
-                        repo_url = source_git(domain, group, git)
-                    else
-                        repo_url = source_http(domain, group, git)
-                    end
-                    repo_url
+                def self.RepoGitUrl domain_name, group_name, git_name
+                    "#{domain_name}:#{group_name}/#{git_name}"
                 end
 
-                def self.source_git(domain, group, git)
-                    "#{domain}:#{group}/#{git}"
-                end
-
-                def self.source_http(domain, group, git)
-                    "#{domain}/#{group}/#{git}"
+                def self.RepoHttpUrl domain_name, group_name, git_name
+                    "#{domain_name}/#{group_name}/#{git_name}"
                 end
 
             end

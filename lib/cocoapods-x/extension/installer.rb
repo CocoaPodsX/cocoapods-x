@@ -14,14 +14,18 @@ module Pod
             attr_accessor :pods_builder, :sources_builder
             attr_accessor :project, :workspace
 
-            attr_accessor :pods
+            attr_accessor :repos
+            attr_accessor :use_repos
+
+            extend Executable
+            executable :rm
+            executable :git
 
             def initialize 
                 @project = nil
                 @workspace = nil
                 @pods_builder = Pod::X::PodsBuilder::new
                 @sources_builder = Pod::X::SourcesBuilder::new
-                @repos = Array::new
             end
 
             def self.installer
@@ -44,21 +48,27 @@ module Pod
                 @workspace = workspace
                 @pods_builder::build(project.pods_file)
                 @sources_builder::build(workspace.source_file)
-                UI.puts 'Pod::X Working...'.green
+                @repos = build_repos()
+                @use_repos = Array::new
+                UI.puts 'Pod::X '.blue + 'Working...'.green
             end
 
             def monitor_initialize_end(defined_in_file = nil, internal_hash = {}, &block)
-                @repos.each do |repo|
-                    unless repo.share
-                        path = @project::repos::pod_path(repo)
-                    else
-                        path = @workspace::repos::pod_path(repo)
-                    end
-                    if !path.exist? || path.empty? 
-                        unless repo.share
-                            @project::repos::pod_clone!(repo)
-                        else
-                            @workspace::repos::pod_clone!(repo)
+                return nil if @repos.nil?
+                return nil if @use_repos.nil?
+
+                @use_repos.each do |name|
+                    repo = @repos[name]
+                    repo_url = repo.repo_url
+                    location_url = repo.location_url
+                    if repo_url.nil? || location_url.nil?
+                        UI.puts 'Pod::X '.blue + "You must specify a repository to clone for '#{name}'.".yellow
+                    elsif !Dir::exist?(location_url) || Dir::empty?(location_url)
+                        UI.section('Pod::X '.blue + "Cloning into '#{name}'...".green) do 
+                            UI.puts 'Pod::X '.blue + "'#{name}' from: #{repo_url}".blue
+                            UI.puts 'Pod::X '.blue + "'#{name}' to: #{location_url}".blue
+                            rm! ['-rf', location_url]
+                            git! ['clone', repo_url, location_url]
                         end
                     end
                 end
@@ -69,29 +79,16 @@ module Pod
             end
             
             def monitor_target_end(name, options = nil, &block)
-                
+
             end
 
             def monitor_pod_begin(name, *requirements)
-                return nil if @pods_builder.nil?
-                return nil if @pods_builder.pods[name].nil?
-                return nil if @sources_builder.nil?
-                return nil if @sources_builder.sources[name].nil?
+                return nil if @repos.nil?
+                return nil if @repos[name].nil?
+                return nil if @use_repos.nil?
 
-                return nil if @project.nil?
-                return nil if @workspace.nil?
-
-                argv = requirements.dup
-                pod = @pods_builder.pods[name]
-                source = @sources_builder.sources[name]
-                repo = Pod::X::Sandbox::Repos::repo(name, argv, pod, source)
-                @repos << repo
-                unless repo.share 
-                    path = @project::repos::pod_path(repo)
-                else
-                    path = @workspace::repos::pod_path(repo)
-                end
-                path
+                @use_repos << name
+                @repos[name].location_url
             end
 
             def monitor_pod_end(name, *requirements)
@@ -99,11 +96,47 @@ module Pod
             end
 
             def monitor_print_post_install_message_begin
-                
+                return nil if @repos.nil?
+                return nil if @use_repos.nil?
+                return nil if @use_repos.size <= 0
+
+                @use_repos.each do |name|
+                    repo = @repos[name]
+                    location_url = repo.location_url
+                    unless location_url.nil?
+                        Dir.chdir(location_url) do
+                            begin
+                                branch = git! ['rev-parse', '--abbrev-ref', 'HEAD']
+                                branch = branch.chomp
+                                UI.puts 'Pod::X '.blue + "Installing #{name} (#{branch.red})".green
+                            rescue => exception
+                                UI.puts 'Pod::X '.blue + "Installing #{name}".green
+                            end
+                        end
+                    end
+                end
+                UI.puts 'Pod::X '.blue + "installation complete!".green
             end
 
             def monitor_print_post_install_message_end
-                UI.puts "Pod::X installation complete! There are #{@repos.size} dependencies from the `pods` file and #{@repos.size} total pods installed.".green
+
+            end
+
+            private
+
+            def build_repos
+                return nil if @pods_builder.nil?
+                return nil if @sources_builder.nil?
+
+                repos = Hash::new(nil)
+                @pods_builder.pods.each do | name, pod_argv |
+                    source_argv = @sources_builder.sources[name]
+                    repo = Pod::X::Sandbox::Repos::Repo(name, pod_argv, source_argv, @workspace, @project)
+                    unless repo.nil?
+                        repos[name] = repo
+                    end
+                end
+                repos
             end
 
         end

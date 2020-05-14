@@ -9,7 +9,7 @@ module Pod
 
                 self.summary = 'Opens repos'
                 self.description = <<-DESC
-                Open a dir of pod named `NAME`.
+                Opens a dir of pod named `NAME`.
                 DESC
 
                 self.arguments = [
@@ -29,7 +29,7 @@ module Pod
                             open_repo! @name
                         end
                     rescue => exception
-                        UI.puts "[!] Pod::X #{exception}".red
+                        UI.puts '[!] Pod::X '.blue + "#{exception}".red
                     end
                 end
 

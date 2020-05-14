@@ -36,7 +36,7 @@ module Pod
                 end
 
                 def source_file
-                    root + 'source'
+                    root + 'sources'
                 end
 
                 def x ## 返回repos
@@ -44,7 +44,6 @@ module Pod
                     for url in Dir.glob(@repos::root + '*/*') do
                         puts url
                     end
-
                     root
                 end
                 

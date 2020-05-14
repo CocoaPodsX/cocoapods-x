@@ -1,4 +1,4 @@
-require 'cocoapods-x/extension/environment/dsl'
+require 'cocoapods-x/extension/installer/dsl'
 
 module Pod
     module X

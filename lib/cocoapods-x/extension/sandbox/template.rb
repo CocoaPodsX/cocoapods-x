@@ -23,7 +23,7 @@ module Pod
                 end
 
                 def source_file
-                    root + 'Projects/podfile/source'
+                    root + 'Projects/podfile/sources'
                 end
 
                 def pods_file
@@ -62,7 +62,7 @@ module Pod
 
                 def clone_template! to
                     repo_url = 'https://github.com/CocoaPodsX/project-template.git'
-                    UI.section("Cloning `#{repo_url}`.") do
+                    UI.section('Pod::X '.blue + "Cloning `#{repo_url}`.") do
                         git! ['clone', '--depth=1', repo_url, to]
                     end
                     

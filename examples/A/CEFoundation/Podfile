@@ -3,6 +3,7 @@ platform :ios, '10.0'
 use_frameworks!
 install! 'cocoapods', :generate_multiple_pod_projects => true
 
+#
 # Targets
 
 workspace 'CEFoundation'
@@ -22,22 +23,6 @@ target 'Example iOS' do
     pod 'SnapKit'
     pod 'Alamofire'
     pod 'RxSwift'
-
-    pod 'A1'
-    pod 'A2'
-    pod 'A3'
-
-    pod 'B1'
-    pod 'B2'
-    pod 'B3'
-
-    pod 'C1'
-    pod 'C2'
-    pod 'C3'
-
-    pod 'D1'
-    pod 'D2'
-    pod 'D3'
 end
 
 target 'Tests iOS' do

@@ -7,40 +7,31 @@ module Pod
             class Edit < X
 
                 self.summary = 'Cocoapods X Edit.'
-                self.description = 'Cocoapods X Edit.'
+                self.description = <<-DESC
+                NAME is 'pods' edit pods file,\n
+                NAME is 'sources' edit source file,\n
+                NAME is 'podfile' edit Podfile file.
+                DESC
 
-                def self.options
-                    [
-                        ['--pods', 'Edit source.rb file.'],
-                        ['--source', 'Edit source.rb file.'],
-                        ['--podfile', 'Edit Podfile file.']
-                    ].concat(super)
-                end
+                self.arguments = [
+                   CLAide::Argument.new('NAME', true),
+                ]
 
                 def initialize(argv)
-                    @wipe_pods = argv.flag?('pods')
-                    @wipe_source = argv.flag?('source')
-                    @wipe_podfile = argv.flag?('podfile')
+                    @name = argv.shift_argument
                     super
                 end
 
                 def run
-                    begin
-                        if @wipe_pods
-                            open_pods!
-                        end
-    
-                        if @wipe_source
-                            open_source!
-                        end
-    
-                        if @wipe_podfile
-                            open_podfile!
-                        end
-                    rescue => exception
-                        UI.puts "[!] Pod::X #{exception}".red
+                    if @name == 'pods'
+                        open_pods!
+                    elsif @name == 'sources'
+                        open_source!
+                    elsif @name == 'Podfile'
+                        open_podfile!
+                    else
+                        self.help!
                     end
-
                 end
 
                 private
@@ -50,18 +41,38 @@ module Pod
 
                 def open_pods!
                     project = Pod::X::Environment::init!
-                    open! ['-a', 'Xcode', project.pods_file]
+                    open_ide! project.pods_file
                 end
 
                 def open_source!
                     workspace = Pod::X::Environment::install!
-                    open! ['-a', 'Xcode', workspace.source_file]
+                    open_ide! workspace.source_file
                 end
 
                 def open_podfile!
-                    project_url = Pathname(Dir.pwd) 
+                    project_url = Pathname(Dir.pwd)
                     podfile = Pod::X::Sandbox::podfile_exists! project_url
-                    open! ['-a', 'Xcode', podfile]
+                    open_ide! podfile
+                end
+
+                private
+
+                def open_ide! url 
+                    ide = sel_ide
+                    if ide
+                        open! ['-a', ide, url]
+                    else
+                        open! [url]
+                    end
+                end
+
+                def sel_ide
+                    ides = ['/Applications/Visual Studio Code.app', '/Applications/Sublime Text.app', '/Applications/Xcode.app']
+                    ides.each do |i|
+                        path = Pathname(i)
+                        return path if path.exist?
+                    end
+                    nil
                 end
 
             end
