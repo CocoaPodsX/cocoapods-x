@@ -28,4 +28,16 @@ end
 target 'Tests iOS' do
     project 'CEFoundation'
     pod 'CEFoundation', :path => './'
+
+    pod 'IGListKit'
+    pod 'AFNetworking', '4.0.1'
+    pod 'YYModel'
+    pod 'MBProgressHUD'
+    pod 'Reachability'
+    pod 'Masonry'
+    pod 'FMDB'
+
+    pod 'SnapKit'
+    pod 'Alamofire'
+    pod 'RxSwift'
 end

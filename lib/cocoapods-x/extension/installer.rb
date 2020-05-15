@@ -86,8 +86,9 @@ module Pod
                 return nil if @repos.nil?
                 return nil if @repos[name].nil?
                 return nil if @use_repos.nil?
-
-                @use_repos << name
+                unless @use_repos.include?(name)
+                    @use_repos << name
+                end
                 @repos[name].location_url
             end
 
