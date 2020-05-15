@@ -7,6 +7,8 @@ module Pod
 
                 include Pod::X::Sandbox::Protocol
 
+                Repo = Struct::new(:name, :domain, :project, :location_url, :branch)
+
                 attr_reader :repos, :template, :projects
 
                 def initialize
@@ -39,12 +41,41 @@ module Pod
                     root + 'sources'
                 end
 
-                def x ## 返回repos
-                    repos_map = Hash::new(nil)
+                def all_pods
+                    all_pods = Array::new
                     for url in Dir.glob(@repos::root + '*/*') do
-                        puts url
+                        pod_url = Pathname(url)
+                        if pod_url.directory?
+                            domain_url = Pathname(pod_url.dirname)
+                            branch = git_branch(pod_url)
+                            all_pods << Repo::new(pod_url.basename.to_s, domain_url.basename.to_s, nil, pod_url.to_s, branch)
+                        end
                     end
-                    root
+                    for url in Dir.glob(@projects::root + '*/repos/*/*') do
+                        pod_url = Pathname(url)
+                        if pod_url.directory?
+                            domain_url = Pathname(pod_url.dirname)
+                            project_url = Pathname(Pathname(domain_url.dirname).dirname)
+                            branch = git_branch(pod_url)
+                            all_pods <<Repo::new(pod_url.basename.to_s, domain_url.basename.to_s, project_url.basename.to_s, pod_url.to_s, branch)
+                        end
+                    end
+                    all_pods
+                end
+
+                private 
+
+                def git_branch url
+                    branch = nil
+                    Dir.chdir(url) do
+                        begin
+                            branch = git! ['rev-parse', '--abbrev-ref', 'HEAD']
+                            branch = branch.chomp
+                        rescue => exception
+                            branch = nil
+                        end
+                    end
+                    branch
                 end
                 
             end

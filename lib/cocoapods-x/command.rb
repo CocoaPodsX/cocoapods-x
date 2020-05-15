@@ -2,7 +2,7 @@ require 'cocoapods-x/command/edit'
 require 'cocoapods-x/command/environment'
 require 'cocoapods-x/command/install'
 require 'cocoapods-x/command/libary'
-# require 'cocoapods-x/command/repos'
+require 'cocoapods-x/command/repo'
 require 'cocoapods-x/command/update'
 require 'cocoapods-x/command/xcode'
 
