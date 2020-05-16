@@ -62,7 +62,7 @@ module Pod
                         url = pods[index].location_url
                         open_url! url
                     rescue => exception
-                        UI.puts '[!] Pod::X '.blue + "#{exception}".red
+                        UI.puts '[!] Pod::X '.magenta + "#{exception}".red
                     end
 
                 end

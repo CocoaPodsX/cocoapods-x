@@ -1,6 +1,0 @@
-framework module CEUIKitCore {
-  umbrella header "CEUIKitCore.h"
-
-  export *
-  module * { export * }
-}

@@ -15,11 +15,11 @@ module Pod
     
                     def run
                         begin
-                            UI.puts 'Pod::X '.blue + "Initing X environment."
+                            UI.puts 'Pod::X '.magenta + "Initing X environment."
                             project = Pod::X::Environment::init!
-                            UI.puts 'Pod::X '.blue + "'#{project.project_name}' initialization complete!".green
+                            UI.puts 'Pod::X '.magenta + "'#{project.project_name}' initialization complete!".green
                         rescue => exception
-                            UI.puts '[!] Pod::X '.blue + "#{exception}".red
+                            UI.puts '[!] Pod::X '.magenta + "#{exception}".red
                         end
                     end
                 end

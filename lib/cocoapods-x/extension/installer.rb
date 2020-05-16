@@ -50,7 +50,7 @@ module Pod
                 @sources_builder::build(workspace.source_file)
                 @repos = build_repos()
                 @use_repos = Array::new
-                UI.puts 'Pod::X '.blue + 'Working...'.green
+                UI.puts 'Pod::X '.magenta + 'Working...'.green
             end
 
             def monitor_initialize_end(defined_in_file = nil, internal_hash = {}, &block)
@@ -62,11 +62,11 @@ module Pod
                     repo_url = repo.repo_url
                     location_url = repo.location_url
                     if repo_url.nil? || location_url.nil?
-                        UI.puts 'Pod::X '.blue + "You must specify a repository to clone for '#{name}'.".yellow
+                        UI.puts 'Pod::X '.magenta + "You must specify a repository to clone for '#{name}'.".yellow
                     elsif !Dir::exist?(location_url) || Dir::empty?(location_url)
-                        UI.section('Pod::X '.blue + "Cloning into '#{name}'...".green) do 
-                            UI.puts 'Pod::X '.blue + "'#{name}' from: #{repo_url}".blue
-                            UI.puts 'Pod::X '.blue + "'#{name}' to: #{location_url}".blue
+                        UI.section('Pod::X '.magenta + "Cloning into '#{name}'...".green) do 
+                            UI.puts 'Pod::X '.magenta + "'#{name}' from: #{repo_url}".magenta
+                            UI.puts 'Pod::X '.magenta + "'#{name}' to: #{location_url}".magenta
                             rm! ['-rf', location_url]
                             git! ['clone', repo_url, location_url]
                         end
@@ -109,14 +109,14 @@ module Pod
                             begin
                                 branch = git! ['rev-parse', '--abbrev-ref', 'HEAD']
                                 branch = branch.chomp
-                                UI.puts 'Pod::X '.blue + "Installing #{name} (#{branch.red})".green
+                                UI.puts 'Pod::X '.magenta + "Installing #{name} (#{branch.red})".green
                             rescue => exception
-                                UI.puts 'Pod::X '.blue + "Installing #{name}".green
+                                UI.puts 'Pod::X '.magenta + "Installing #{name}".green
                             end
                         end
                     end
                 end
-                UI.puts 'Pod::X '.blue + "installation complete!".green
+                UI.puts 'Pod::X '.magenta + "installation complete!".green
             end
 
             def monitor_print_post_install_message_end

@@ -47,7 +47,7 @@ module Pod
                                     remove_files ['Pods', 'Podfile.lock', 'DerivedData']
                                 end
                             rescue => exception
-                                UI.puts '[!] Pod::X '.blue + "#{exception}".red
+                                UI.puts '[!] Pod::X '.magenta + "#{exception}".red
                             end
                         end
                     end
