@@ -1,0 +1,6 @@
+framework module CXFoundation {
+  umbrella header "CXFoundation.h"
+
+  export *
+  module * { export * }
+}

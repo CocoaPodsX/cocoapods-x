@@ -1,0 +1,6 @@
+framework module CXUIKitCore {
+  umbrella header "CXUIKitCore.h"
+
+  export *
+  module * { export * }
+}

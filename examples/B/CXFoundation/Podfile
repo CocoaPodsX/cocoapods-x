@@ -1,0 +1,45 @@
+platform :ios, '9.0'
+
+use_frameworks!
+install! 'cocoapods', :generate_multiple_pod_projects => true
+
+workspace 'CXFoundation'
+
+def framework_dependencies
+    pod 'IGListKit'
+    pod 'AFNetworking', '4.0.1'
+    pod 'YYModel'
+    pod 'MBProgressHUD'
+    pod 'Reachability'
+    pod 'Masonry'
+    pod 'FMDB'
+
+    pod 'SnapKit'
+    pod 'Alamofire'
+    pod 'RxSwift'
+end
+
+def example_dependencies
+
+end
+
+def tests_dependencies
+
+end
+
+target 'CXFoundation iOS' do
+    project 'CXFoundation'
+    framework_dependencies
+end
+
+target 'Example iOS' do
+    project 'Examples/Examples'
+    framework_dependencies
+    example_dependencies
+end
+
+target 'Tests iOS' do
+    project 'CXFoundation'
+    framework_dependencies
+    tests_dependencies
+end
