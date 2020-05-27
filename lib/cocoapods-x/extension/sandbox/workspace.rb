@@ -33,8 +33,9 @@ module Pod
                     @template.update!
                     @projects.update!
                     
-                    rm! ['-rf', source_file]
-                    cp! [@template::source_file, source_file]
+                    unless source_file.exist?
+                        cp! [@template::source_file, source_file]
+                    end
                 end
 
                 def source_file
