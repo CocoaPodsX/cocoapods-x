@@ -1,3 +1,4 @@
+require 'cocoapods-x/gem_version'
 require 'cocoapods-x/extension/sandbox'
 require 'cocoapods-x/extension/configure'
 require 'cocoapods-x/extension/installer/dsl'
@@ -50,7 +51,7 @@ module Pod
                 @sources_builder::build(workspace.source_file)
                 @repos = build_repos()
                 @use_repos = Array::new
-                UI.puts 'Pod::X '.magenta + 'Working...'.green
+                UI.puts 'Pod::X '.magenta + "(#{CocoapodsX::VERSION}) Working...".green
             end
 
             def monitor_initialize_end(defined_in_file = nil, internal_hash = {}, &block)
